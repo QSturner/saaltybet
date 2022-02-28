@@ -1,0 +1,160 @@
+17.02.2022 
+
+> Saalty-Bet-Bot@1.0.0 start /home/runner/Saalty-Bet-Bot
+> node index.js
+
+Command "undefined" loaded
+Command "bot-help" loaded
+Connection has been established successfully.
+Command "bot-info" loaded
+Command "echo" loaded
+Command "money" loaded
+Command "mymoney" loaded
+Command "ok-sss" loaded
+Command "openbets" loaded
+Command "register" loaded
+Command "teller" loaded
+Event "messageCreate" loaded
+Event "ready" loaded
+Executing (default): SELECT 1+1 AS result
+signal: terminated
+ node DebugFunctions.js
+Connection has been established successfully.
+Executing (default): SELECT `DiscordID`, `Name`, `username`, `currentMoney`, `timestamps`, `createdAt`, `updatedAt` FROM `tblUserdata` AS `tblUserdata`;
+Executing (default): SELECT `id`, `runningBetID`, `bettingpool`, `fighterNo`, `createdAt`, `updatedAt` FROM `tblPoolBets` AS `tblPoolBet`;
+Executing (default): SELECT `betID`, `betStart`, `betEnd`, `isOpen`, `createdAt`, `updatedAt` FROM `tblBets` AS `tblBets`;
+Executing (default): SELECT `transactionID`, `amount`, `userID`, `betID`, `transactionType`, `createdAt`, `updatedAt` FROM `tblTransactions` AS `tblTransaction`;
+Executing (default): SELECT 1+1 AS result
+[
+  {
+    "transactionID": 1,
+    "amount": 100,
+    "userID": "426849408957808640",
+    "betID": null,
+    "transactionType": "ADD",
+    "createdAt": "2022-02-06T03:57:30.356Z",
+    "updatedAt": "2022-02-06T03:57:30.356Z"
+  },
+  {
+    "transactionID": 2,
+    "amount": 100,
+    "userID": "426849408957808640",
+    "betID": null,
+    "transactionType": "ADD",
+    "createdAt": "2022-02-06T04:01:13.763Z",
+    "updatedAt": "2022-02-06T04:01:13.763Z"
+  },
+  {
+    "transactionID": 3,
+    "amount": 100,
+    "userID": "426849408957808640",
+    "betID": null,
+    "transactionType": "Admin-ADD",
+    "createdAt": "2022-02-06T10:48:33.092Z",
+    "updatedAt": "2022-02-06T10:48:33.092Z"
+  },
+  {
+    "transactionID": 4,
+    "amount": 100,
+    "userID": "426849408957808640",
+    "betID": null,
+    "transactionType": "Admin-ADD",
+    "createdAt": "2022-02-06T11:27:17.982Z",
+    "updatedAt": "2022-02-06T11:27:17.982Z"
+  },
+  {
+    "transactionID": 5,
+    "amount": 100,
+    "userID": "426849408957808640",
+    "betID": null,
+    "transactionType": "Admin-ADD",
+    "createdAt": "2022-02-06T12:22:50.518Z",
+    "updatedAt": "2022-02-06T12:22:50.518Z"
+  },
+  {
+    "transactionID": 6,
+    "amount": -200,
+    "userID": "426849408957808640",
+    "betID": null,
+    "transactionType": "Admin-SUB",
+    "createdAt": "2022-02-06T12:23:45.351Z",
+    "updatedAt": "2022-02-06T12:23:45.351Z"
+  },
+  {
+    "transactionID": 7,
+    "amount": 100,
+    "userID": "426849408957808640",
+    "betID": null,
+    "transactionType": "Admin-ADD",
+    "createdAt": "2022-02-06T12:25:25.465Z",
+    "updatedAt": "2022-02-06T12:25:25.465Z"
+  },
+  {
+    "transactionID": 8,
+    "amount": -300,
+    "userID": "174608411550416897",
+    "betID": null,
+    "transactionType": "Admin-SUB",
+    "createdAt": "2022-02-06T13:34:43.493Z",
+    "updatedAt": "2022-02-06T13:34:43.493Z"
+  },
+  {
+    "transactionID": 9,
+    "amount": 300,
+    "userID": "174608411550416897",
+    "betID": null,
+    "transactionType": "Admin-ADD",
+    "createdAt": "2022-02-06T13:34:50.744Z",
+    "updatedAt": "2022-02-06T13:34:50.744Z"
+  },
+  {
+    "transactionID": 10,
+    "amount": 5000,
+    "userID": "174608411550416897",
+    "betID": null,
+    "transactionType": "Admin-ADD",
+    "createdAt": "2022-02-06T13:34:59.334Z",
+    "updatedAt": "2022-02-06T13:34:59.334Z"
+  },
+  {
+    "transactionID": 11,
+    "amount": -5000,
+    "userID": "174608411550416897",
+    "betID": null,
+    "transactionType": "Admin-SUB",
+    "createdAt": "2022-02-06T13:35:07.900Z",
+    "updatedAt": "2022-02-06T13:35:07.900Z"
+  },
+  {
+    "transactionID": 12,
+    "amount": 200,
+    "userID": "174608411550416897",
+    "betID": null,
+    "transactionType": "Admin-ADD",
+    "createdAt": "2022-02-16T20:38:43.755Z",
+    "updatedAt": "2022-02-16T20:38:43.755Z"
+  }
+]
+[
+  {
+    "DiscordID": "174608411550416897",
+    "Name": "MadZee",
+    "username": "MadZee",
+    "currentMoney": 700,
+    "timestamps": null,
+    "createdAt": 1643890896778,
+    "updatedAt": "2022-02-16T20:38:43.768Z"
+  },
+  {
+    "DiscordID": "426849408957808640",
+    "Name": "QDynamic",
+    "username": "QDynamic",
+    "currentMoney": 500,
+    "timestamps": null,
+    "createdAt": 1644024818971,
+    "updatedAt": "2022-02-08T17:08:00.068Z"
+  }
+]
+[]
+[]
+ 

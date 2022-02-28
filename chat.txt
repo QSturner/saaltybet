@@ -1,0 +1,30 @@
+Here, just makin some space. I sorta wanna wait till Rhett's back so he can watch. Because he'll probably become overwhelmed if he comes to a million lines of code lol
+I think he's sleeping rn. Btw let me know what else I can do to help ease the process. Any additional info? Any other resources needed? Wanna jam to the saltybet playlist?
+
+MadZee: I've been looking into SQLite and the limitations the database system hof replit.com has.
+We can implement it in SQLite, we just need to write all the math heavy logic in node js, since there are no stored procedures in SQLite. Atleast we can do a relational database, its just not a neat separation between the 2 areas. 
+
+
+
+
+
+
+MZ: I sure hope this stuff works the way I believe it should lol. Been reading up all the flippin differences in this JS variant compared to the last one I worked on way back in 2016.
+Aye yeah the stuff should work with the included .upsert and .insert methods provided. We just need to figure out our "control level" checks so nobody can abuse the whole "give x x amount of mone". Oh and we might need to figure out how the register the players. Well we should test if it is injection safe
+
+Like from the workflow we could have so that when people wanna play they say something like "join game" and the bot tells em:
+"Hello there X, welcome to the xxxxxxx heres your daily 500. Go and bust some heads high roller!" or something.
+
+If you check the model, I set 500 as a default value in the tblUser :D
+so you can create them and then have the bot report the status of that with the appropriate greeting
+aye I'll be checking that out, will prolly add some thoughts in comment form if I have any atm lol.
+
+
+QDynamic: It looks legit. The real test is querying data from it/inserting data into it
+Yeah, I already figured that out, remember? Look at the admin.js command file
+
+"Oh and we might need to figure out how the register the players"
+I'm workin on that rn. I think the .create method is the best one to use.
+
+Yeah, that sounds good. So would that be AFTER they're registered? Yeah, okay. Cool. 
+I'll be workin on register.js now. Cool cool.

@@ -24,13 +24,13 @@ class TransactionGenerator {
 static ERRORINVALIDNUMBER = "Requested Amount Invalid. Please retype the command with a negative or positive number.";
 static ERRORUSERNOTFOUND = "User's Saa-ltyBet account doesn't exist. Register the user first."
 static ERRORIMPOSSIBLETRANSACTION = "An Error Occured. Please check your Input."
+static ERRORNOOPENTRANSACTION = "No open Bet could be found. Make sure a bet is open, before placing bets!"
 
   //Private Members:
   #abortTransaction = false; // internal error indicator
   #transactionAmount = 0;
   #transactionType = ""; // the value that will get put into the Transaction Field "transactionType"
   #targetUserInstance;
-  #originalArguments = [];
   #databaseContext; // sequelizer instance.
   #betID = 0; // betID is defaulted. will be considered by the transactionMode, else its zero by default.
   //Public Members:
@@ -39,14 +39,15 @@ static ERRORIMPOSSIBLETRANSACTION = "An Error Occured. Please check your Input."
   transactionStatus = true; // external error indicator
 
     constructor( databaseContext, transactionMode, targetUserID, transactionAmount ) {
-      let transactionAmount = parseInt(transactionAmount);
+      let Amount = parseInt(transactionAmount);
 
       // check if the provided information is plausible
       if ( (#validateNumber(transactionAmount) === true) && (this.#abortTransaction === false) ) {
-        this.#transactionAmount = transactionAmount;
+        this.#transactionAmount = Amount;
         this.#targetUserInstance = #getTargetUserInstance(targetUserID);
         this.#transactionType = transactionMode;
         this.#betID = #getOpenBetID(transactionMode);
+        this.transactionMessages = #defineTransactionMessage(transactionMode, Amount);
         //this.#message = message;
         this.#databaseContext = databaseContext;
         //this.transactionStatus = true; // should be set after actually commiting stuff
@@ -66,7 +67,7 @@ static ERRORIMPOSSIBLETRANSACTION = "An Error Occured. Please check your Input."
         let openBet = await #databaseContext.models['tblBets'].findOne("where: {isOpen: true,}");
         return openBet.betID;
       } else {
-        this.transactionReply = ERRORUSERNOTFOUND;
+        this.transactionReply = ERRORNOOPENTRANSACTION;
         return 0;
       };
     };
@@ -83,6 +84,7 @@ static ERRORIMPOSSIBLETRANSACTION = "An Error Occured. Please check your Input."
       //this.transactionStatus = True;
       return targetUser;
     } else {
+      this.transactionReply = ERRORUSERNOTFOUND;
       this.#abortTransaction = True;
     };
   }
@@ -111,21 +113,26 @@ static ERRORIMPOSSIBLETRANSACTION = "An Error Occured. Please check your Input."
       }
     };
 
-    //alters Transactiontype comment to specify the type to be e.g "ADMIN-ADD or ADMIN-SUB"
-    //No error handling, cause error handling is for pussies :P (srsly will need to add that later.)
-    #defineTransactionType(transactionType, transactionAmount) {
+    /*alters Transactiontype comment to specify the type to be e.g "ADMIN-ADD or ADMIN-SUB"
+        @params{string, Integer}: Label for Transaction and Amount of money the user wishes to transfer.
+        @return{array[string, string] } 2d Array containing message blocks for a Bot reply message to the users.
+    */
+    #defineTransactionMessages(transactionType, transactionAmount) {
+      let transTypeHelper = "";
       if (transactionAmount != 0) {
-        return #setBasicMessage(transactionAmount)[0] + "-" + transactionType;
+        let MessageHelper = #setBasicMessage(transactionAmount);
+        transTypeHelper = MessageHelper[0] + "-" + transactionType;
+        return [transTypeHelper, MessageHelper[1]];
       } else {
         return "ABORT";
       }
     };
 
 
+  /* executes Transaction if possible and returns results
+    assumes: construction went without issue. (all input validations are valid.)
 
-  /* executes Transaction if possible and returns results.
-    the transactionMessages can be used to convey to the user the
-
+    @return:{ boolean }  true on success, false on failure.
   */
    commitTransaction(){
      if (this.transactionStatus === true) {
@@ -138,46 +145,26 @@ static ERRORIMPOSSIBLETRANSACTION = "An Error Occured. Please check your Input."
        console.log(`Transaction number ${addTransaction.transactionID} Commited.`);
        console.log(`Applying changes to User: ${this.#targetUserInstance.DiscordID}`);
        // update targetUser Instance.
+       let oldMoney = this.#targetUserInstance.currentMoney
 
+        // actually adding/subtracting money to user.
+        #targetUserInstance.update({
+          currentMoney: #targetUserInstance.currentMoney + this.#transactionAmount
+        });
+
+        // outputting result.
+       let REPLYMSG = `${addTransaction.amount} has been ${transactionMessages[1]} to ${targetUserInstance.Name}'s balance.\nOld Balance: ${oldMoney}\nNew Balance: ${targetUserInstance.currentMoney}!`;
+
+        console.log(REPLYMSG);
+       this.transactionReply = REPLYMSG;
+       return this.transactionStatus = true;
 
      } else {
        console.log("Aborting Transaction.");
        return this.transactionStatus;
-     }
+     };
     };
-
-  #setTransactionStatus(){
-
-  }
 };
 
-//module.exports = TransactionGenerator;
-
-/* IGNORE PAST TIS POINT. I'm just storing old code for reference Will be Deleted as I progress.
-
-
-  // Checks what type of transaction is being requested and if the amouint is not null
-  if (validateNumber(transactionAmount) == true) {
-    transactionMessages = setTransactionMessage(transactionAmount);
-  } else { // abort on invalid number.
-    return message.reply("Requested Amount Invalid. Please retype the command with a negative or posiive number.")
-  };
-
-  // Makes sure user entered exists in the database
-  if (targetUserInstance === null) {
-    return message.reply("User's Saa-ltyBet account doesn't exist. Register the user first.");
-  };
-  // creating new transaction.
-
-  var oldMoney = targetUserInstance.currentMoney
-
-  // actually adding/subtracting money to user.
-  targetUserInstance.update({
-    currentMoney: targetUserInstance.currentMoney + addTransaction.amount
-  });
-
-  // outputting result.
-  console.log(`${addTransaction.amount} has been ${transactionMessages[1]} to ${targetUserInstance.Name}'s balance.\nOld Balance: ${oldMoney}\nNew Balance: ${targetUserInstance.currentMoney}!`);
-
-
+module.exports = TransactionGenerator;
 */

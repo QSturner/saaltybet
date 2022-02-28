@@ -167,4 +167,3 @@ static ERRORNOOPENTRANSACTION = "No open Bet could be found. Make sure a bet is 
 };
 
 module.exports = TransactionGenerator;
-*/

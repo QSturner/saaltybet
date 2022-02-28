@@ -1,7 +1,7 @@
 /* database related stuffs*/
 const { Sequelize } = require('sequelize');
 
-// Establish connection to DB File 
+// Establish connection to DB File
 
 /*
   Connection Object. contains the Sequelize Class Object for the session.
@@ -25,6 +25,7 @@ const bets = require("../Database/Models/bets.js")(databaseConnection, Sequelize
 const bettingPools = require("../Database/Models/bettingPools.js")(databaseConnection, Sequelize.DataTypes);
 const userID = require("../Database/Models/userData.js")(databaseConnection, Sequelize.DataTypes);
 const transactions = require("../Database/Models/transactions.js")(databaseConnection, Sequelize.DataTypes);
+
 
 /*
   Creates the Entity Relationship Model.
@@ -53,4 +54,3 @@ function buildDatabase() {
 
 //buildDatabase();
 module.exports = {bets, bettingPools, userID, transactions, databaseConnection};
-

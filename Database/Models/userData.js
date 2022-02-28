@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-	return sequelize.define('tblUserdata', {
+	const userData = sequelize.define('tblUserdata', {
   	DiscordID: {
   		type: DataTypes.STRING,
   		unique: true,
@@ -15,5 +15,20 @@ module.exports = (sequelize, DataTypes) => {
   	},
     timestamps: false,
     createdAt: 'creationDate'
-  }) 
+  })
+
+/* checks user role. used for command authority
+  @param {message}     the original message object that called the command.
+  @return {boolean}   will return true if the author of the message is in the defined group, or false if not.
+*/
+userData.prototype.isAdmin = function (message) {
+	return message.member.roles.cache.has("937076188734693458");
+}
+
+// Experiment
+userData.prototype.helloWorld = function () {
+  console.log(`Hello World! \nMy Name is:${this.Name}\nMy ID is ${this.DiscordID}`);
+}
+
+return userData;
 };

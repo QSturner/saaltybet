@@ -30,7 +30,7 @@ const transactions = require("../Database/Models/transactions.js")(databaseConne
 /*
   Creates the Entity Relationship Model.
 */
-setRelationships = function () {
+databaseConnection.prototype.setRelationships = function () {
   bets.hasMany(bettingPools, {
     foreignKey: 'runningBetID'
   });
@@ -40,6 +40,7 @@ setRelationships = function () {
     foreignKey: 'userID'
   });
 };
+
 
 /*
   Mehod that takes all the models and builds the Database. Only gets executed once in the project.

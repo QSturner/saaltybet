@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define('tblTransaction', {
+  const transactionModel = sequelize.define('tblTransaction', {
     transactionID: {
       type: DataTypes.INTEGER,
       unique: true,
@@ -24,4 +24,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true, // non optional for reasons of processing and reconciliation.
     },
-  })};
+  });
+  // helper Methods:
+
+return transactionModel;
+};

@@ -31,5 +31,5 @@ betsModel.prototype.closeBet = function () {
 // Idea: the betsModel alters the Sequelize Model through the call of "define."
 //       hence the pure Sequelize Object doesn't have access to it, but only instances...
 */
-return betsModel
+return betsModel;
 };

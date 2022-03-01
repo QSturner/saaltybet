@@ -6,6 +6,80 @@ Idea is that the bet commands implement this controller and only access its func
 
 */
 
+//erstelle Neue Wette mit 2 Pools.
+/* Wette Klassen Erweiterung:
+  +-> Wette Model Instanz
+  ++-> Pool Instanz Fighter A
+   +--> Transactions für Kämpfer A [...]
+  +--> Pool Instanz Fighter A
+   +--> Transactions für Kämpfer B [...]
+*/
+
+class betController {
+  //public members
+  publicResponseMessage = "";
+
+  //private members
+  #databaseContext;
+  #BetInstance;
+  #controllerBetPoolA; // references to the BetPoolController
+  #controllerBetPoolB;
+
+
+  constructor(databaseContext) {
+    // to make a new Controller, it should just need the databaseContext, all other operations depend on the command.
+    // initalize the model with the bare databaseContext.
+    this.#databaseContext = databaseContext;
+    this.#BetInstance = databaseContext.models['tblBets'];
+    this.#controllerBetPoolA = databaseContext.models['tblPoolBet'];
+    this.#controllerBetPoolB = databaseContext.models['tblPoolBet'];
+    this.publicResponseMessage = "BetController initialized."
+    console.log(this.publicResponseMessage)
+  }
+
+
+  /*
+    Function that generates a new Bet and the BetPools.
+  */
+    newBet() {
+      #BetInstance.create();
+
+    }
+    /*
+      Function that grabs the last created bet and assigns it to the controller members.
+    */
+    getLastBet(){
+
+    }
+
+  /*
+    Function that sets the current betInstance as active.
+  */
+  openBet() {
+    #BetInstance.open = true;
+  }
+  /*
+    Function that closes the Bet and starts the payout of the BetPools.
+  */
+  closeBet() {
+    #BetInstance.open = false;
+    #beginPayout();
+  }
+
+  /*control function that shows if the assigned bet is open or closed. */
+  isOpen() {
+    if (this.#BetInstance.open === true) {
+      return this.#BetInstance.open
+    } else {
+      return false;
+    }
+  }
+
+}
+
+module.exports = betController;
+
+
 /*
 Bet fields:
   betID: type: DataTypes.INTEGER, PK
@@ -18,5 +92,3 @@ Bet fields:
   },
 
 */
-
-console.log("BetController loaded for some effin reason");

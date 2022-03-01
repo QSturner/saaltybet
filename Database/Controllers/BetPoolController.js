@@ -14,6 +14,15 @@ possible actions:
 
 */
 
+//erstelle Neue Wette mit 2 Pools.
+/* Wette Klassen Erweiterung:
+  +-> Wette Model Instanz
+  ++-> Pool Instanz Fighter A
+   +--> Transactions für Kämpfer A [...]
+  +--> Pool Instanz Fighter A
+   +--> Transactions für Kämpfer B [...]
+*/
+
 /* BetPool fields:
   runningBetID: {
     type: DataTypes.INTEGER,
@@ -26,7 +35,7 @@ possible actions:
 
 /* things we need:
 - query for all transactions with the currentBetID and the current fighter
-- 
+-
 
 */
 

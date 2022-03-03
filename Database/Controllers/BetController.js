@@ -75,6 +75,19 @@ class betController {
     }
   }
 
+  /*
+    Put money on a Player if possible and take that money from the Users account.
+  */
+  betOnPlayer(playerNumber,amount,message) {
+
+  }
+
+  payoutWinners(playerNumber) {
+
+  }
+
+
+
 }
 
 module.exports = betController;

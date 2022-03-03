@@ -1,4 +1,7 @@
 
+
+
+
 /*
 ShortDescription:
 Controller for Generating, validating and Executing Transactions
@@ -11,9 +14,9 @@ The "CommitTransaction" Functions will then commit the actual transaction and re
 The Members of the object can then be used to output feedback to the user. The "Reset" Method will allow the caller to reuse the
 class in a loop.
 
-  @param {databaseContext}    Sequelizer Instance which will handle the Database I/O
+  @param {databaseContext}    Sequelizer Instance which will handle the Database I/O (the databaseConnection object from db.js ...)
   @param {transactionMode}    string containing the Origin of Transaction (used for special case handling and later reconciliation of transactions)
-  @param {targetUserID}         string containing the UserID of the transaction target. (Discord ID or @Tag object.)
+  @param {targetUserID}         string containing the UserID of the transaction target. (Discord ID)
   @param {transactionAmount}  String containing Amount of Currency getting added/subtracted from target.
 
   @output {transactionMessage} String Array containing 2 text templates for the reply message.
@@ -22,9 +25,9 @@ class in a loop.
 class TransactionGenerator {
 
 static ERRORINVALIDNUMBER = "Requested Amount Invalid. Please retype the command with a negative or positive number.";
-static ERRORUSERNOTFOUND = "User's Saa-ltyBet account doesn't exist. Register the user first."
-static ERRORIMPOSSIBLETRANSACTION = "An Error Occured. Please check your Input."
-static ERRORNOOPENTRANSACTION = "No open Bet could be found. Make sure a bet is open, before placing bets!"
+static ERRORUSERNOTFOUND = "User's Saa-ltyBet account doesn't exist. Register the user first.";
+static ERRORIMPOSSIBLETRANSACTION = "An Error Occured. Please check your Input.";
+static ERRORNOOPENTRANSACTION = "No open Bet could be found. Make sure a bet is open, before placing bets!";
 
   //Private Members:
   #abortTransaction = false; // internal error indicator
@@ -33,6 +36,7 @@ static ERRORNOOPENTRANSACTION = "No open Bet could be found. Make sure a bet is 
   #targetUserInstance;
   #databaseContext; // sequelizer instance.
   #betID = 0; // betID is defaulted. will be considered by the transactionMode, else its zero by default.
+  #targetUserID = "";
   //Public Members:
   transactionReply = ""; // Reply String that shows the Status of the Transaction.
   transactionMessages = ["",""]; // transaction Mode string, for the text templates in the command that implements this class.
@@ -42,32 +46,43 @@ static ERRORNOOPENTRANSACTION = "No open Bet could be found. Make sure a bet is 
       let Amount = parseInt(transactionAmount);
 
       // check if the provided information is plausible
-      if ( (#validateNumber(transactionAmount) === true) && (this.#abortTransaction === false) ) {
-        this.#transactionAmount = Amount;
-        this.#targetUserInstance = #getTargetUserInstance(targetUserID);
-        this.#transactionType = transactionMode;
-        this.#betID = #getOpenBetID(transactionMode);
-        this.transactionMessages = #defineTransactionMessage(transactionMode, Amount);
-        //this.#message = message;
+      if ( (this.#validateNumber(transactionAmount) === true) && (this.#abortTransaction === false) ) {
+        this.#targetUserID = targetUserID;
         this.#databaseContext = databaseContext;
+        this.#transactionAmount = Amount;
+        this.#targetUserInstance = this.#databaseContext.models['tblUserdata'];
+        this.#betID = this.#databaseContext.models['tblBets'];
+        this.#transactionType = transactionMode;
+        this.transactionMessages = this.#defineTransactionMessages(transactionMode, Amount);
+        //this.#message = message;
         //this.transactionStatus = true; // should be set after actually commiting stuff
       } else {
         this.transactionStatus = false;
         console.log("ABORTING TRANSACTION Generation. Implausible Input.");
         return this.transactionStatus;
       };
+      this.transactionReply = "Ready to look for open bets and targetUser."; // this is just the ready message.
     };
+
+  /*
+    Async Method that fills the Database specific members of the class with data.
+*/
+  async init(){
+    this.#targetUserInstance = await this.#getTargetUserInstance(this.#targetUserID);
+    this.#betID = this.#getOpenBetID(this.#transactionType);
+  }
+
 
     /* tries to return the current open bet. if no bet is open, it will abort the transaction if the transactionType is non Admin or debug related.
       @param {transactionType}     the transactionType for current transaction
       @return {boolean}   will return true if the author of the message is in the defined group, or false if not.
     */
-    #getOpenBetID(transactionMode) {
+    async #getOpenBetID(transactionMode) {
       if (transactionMode !== 'ADMIN') {
-        let openBet = await #databaseContext.models['tblBets'].findOne("where: {isOpen: true,}");
+        let openBet = await this.#databaseContext.models['tblBets'].findOne("where: {isOpen: true,}");
         return openBet.betID;
       } else {
-        this.transactionReply = ERRORNOOPENTRANSACTION;
+        this.transactionReply = this.ERRORNOOPENTRANSACTION;
         return 0;
       };
     };
@@ -76,16 +91,20 @@ static ERRORNOOPENTRANSACTION = "No open Bet could be found. Make sure a bet is 
       @param {DiscordID}     the transactionType for current transaction
       @return {null}         Function has no return, but will set the TransactionStatus to FALSE on failure.
   */
-  #getTargetUserInstance(DiscordID) {
-    targetUser = await this.#databaseContext.models['tblUserdata'].findOne(
+  async #getTargetUserInstance(DiscordID) {
+
+    let targetUser = await this.#databaseContext.models['tblUserdata'].findOne(
       { where: { DiscordID: `${DiscordID}` } }
     );
-    if (targetUser !== NULL ) {
-      //this.transactionStatus = True;
+    if (Object.keys(targetUser).length !== 0) {
+      console.log("User found.");
+      console.log(JSON.stringify(targetUser));
       return targetUser;
     } else {
-      this.transactionReply = ERRORUSERNOTFOUND;
+      console.log("ABORTING TRANSACTION!");
+      this.transactionReply = this.ERRORUSERNOTFOUND;
       this.#abortTransaction = True;
+      return null;
     };
   }
 
@@ -98,7 +117,7 @@ static ERRORNOOPENTRANSACTION = "No open Bet could be found. Make sure a bet is 
         return true;
       } else {
         this.#abortTransaction = true;
-        this.reply = ERRORINVALIDNUMBER
+        this.reply = this.ERRORINVALIDNUMBER
         return false;
       }
     };
@@ -120,7 +139,7 @@ static ERRORNOOPENTRANSACTION = "No open Bet could be found. Make sure a bet is 
     #defineTransactionMessages(transactionType, transactionAmount) {
       let transTypeHelper = "";
       if (transactionAmount != 0) {
-        let MessageHelper = #setBasicMessage(transactionAmount);
+        let MessageHelper = this.#setBasicMessage(transactionAmount);
         transTypeHelper = MessageHelper[0] + "-" + transactionType;
         return [transTypeHelper, MessageHelper[1]];
       } else {
@@ -134,9 +153,11 @@ static ERRORNOOPENTRANSACTION = "No open Bet could be found. Make sure a bet is 
 
     @return:{ boolean }  true on success, false on failure.
   */
-   commitTransaction(){
+   async commitTransaction(){
      if (this.transactionStatus === true) {
-        const addTransaction = await transactions.create({
+        console.log(this.#targetUserInstance);
+
+        const addTransaction = await this.#databaseContext.models['tblTransaction'].create({
         amount: this.#transactionAmount,
         userID: this.#targetUserInstance.DiscordID,
         transactionType: this.#transactionType,
@@ -148,12 +169,12 @@ static ERRORNOOPENTRANSACTION = "No open Bet could be found. Make sure a bet is 
        let oldMoney = this.#targetUserInstance.currentMoney
 
         // actually adding/subtracting money to user.
-        #targetUserInstance.update({
-          currentMoney: #targetUserInstance.currentMoney + this.#transactionAmount
+        this.#targetUserInstance.update({
+          currentMoney: this.#targetUserInstance.currentMoney + this.#transactionAmount
         });
 
         // outputting result.
-       let REPLYMSG = `${addTransaction.amount} has been ${transactionMessages[1]} to ${targetUserInstance.Name}'s balance.\nOld Balance: ${oldMoney}\nNew Balance: ${targetUserInstance.currentMoney}!`;
+       let REPLYMSG = `${addTransaction.amount} has been ${this.transactionMessages[1]} to ${this.#targetUserInstance.Name}'s balance.\nOld Balance: ${oldMoney}\nNew Balance: ${this.#targetUserInstance.currentMoney}!`;
 
         console.log(REPLYMSG);
        this.transactionReply = REPLYMSG;

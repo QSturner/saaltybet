@@ -16,7 +16,7 @@ module.exports = {
         .setName('close-bets')
         .setDescription('ADMIN command that closes the betting pool for the current match.'),
     async execute(interaction) {
-        let abortCondition = !checkForAdmin(message);
+        let abortCondition = !checkForAdmin(interaction);
 		const bets = new betController(databaseConnection);
 		let lastBetFound = await bets.getLastBet();
 		let isBetOpen = bets.isOpen();

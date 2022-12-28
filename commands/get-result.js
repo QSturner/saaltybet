@@ -8,7 +8,7 @@ const betController = require("../Database/Controllers/betController.js");
  * @return {boolean} Will return true if the author of the message is in the defined group, or false if not.
 */
 function checkForAdmin(interaction) {
-	return interaction.member.roles.cache.has('937076188734693458');
+	return interaction.member.roles.cache.has('937076188734693458'); //TODO: Change to correct role id once deployed in Saa's server
 }
 
 module.exports = {
